@@ -21,4 +21,9 @@ public class UserController {
         model.addAttribute("userList", userService.findAll());
         return "users/list";
     }
+
+    @GetMapping("/creationForm")
+    public String showCreationForm() {
+        return "users/creationForm";
+    }
 }
