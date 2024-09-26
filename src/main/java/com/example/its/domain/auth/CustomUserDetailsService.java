@@ -1,7 +1,10 @@
 package com.example.its.domain.auth;
 
 import java.util.Collections;
+import java.util.List;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,9 +22,13 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         return userRepository.findByUsername(username)
-                .map(user -> new CustomUserDetails(user.getUsername(), user.getPassword(), Collections.emptyList()))
+                .map(user -> new CustomUserDetails(user.getUsername(), user.getPassword(), toGrantedAuthorityList(user.getAuthority())))
                 .orElseThrow(() -> new UsernameNotFoundException(
                     "Given username is not found. (username = '" + username + "')"
                 ));
+    }
+
+    private List<GrantedAuthority> toGrantedAuthorityList(User.Authority authority) {
+        return Collections.singletonList(new SimpleGrantedAuthority(authority.name()));
     }
 }
